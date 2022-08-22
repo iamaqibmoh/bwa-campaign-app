@@ -4,18 +4,19 @@ import (
 	"BWA-CAMPAIGN-APP/model/domain"
 	"BWA-CAMPAIGN-APP/model/web"
 	"BWA-CAMPAIGN-APP/repository"
+	"errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type UserServiceImpl struct {
-	repo repository.Repository
+type userServiceImpl struct {
+	repo repository.UserRepository
 }
 
-func NewUserService(repo repository.Repository) UserService {
-	return &UserServiceImpl{repo: repo}
+func NewUserService(repo repository.UserRepository) UserService {
+	return &userServiceImpl{repo: repo}
 }
 
-func (service *UserServiceImpl) Register(request web.RegisterUserRequest) (domain.User, error) {
+func (s *userServiceImpl) Register(request web.RegisterUserRequest) (*domain.User, error) {
 	user := domain.User{}
 	user.Name = request.Name
 	user.Email = request.Email
@@ -23,17 +24,39 @@ func (service *UserServiceImpl) Register(request web.RegisterUserRequest) (domai
 
 	bytesPass, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.MinCost)
 	if err != nil {
-		return user, err
+		return &user, err
 	}
 
 	user.PasswordHash = string(bytesPass)
 	user.Role = "user"
 
-	save, err := service.repo.Save(user)
+	save, err := s.repo.Save(user)
 
 	if err != nil {
 		return save, err
 	}
 
 	return save, nil
+}
+
+func (s *userServiceImpl) Login(request web.LoginUserRequest) (*domain.User, error) {
+	email := request.Email
+	password := request.Password
+
+	findByEmail, err := s.repo.FindByEmail(email)
+	if err != nil {
+		return findByEmail, err
+	}
+
+	if findByEmail.Id == 0 {
+		return findByEmail, errors.New("No user found on that email ")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(findByEmail.PasswordHash), []byte(password))
+	if err != nil {
+		return findByEmail, err
+	}
+
+	return findByEmail, nil
+
 }

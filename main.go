@@ -10,14 +10,15 @@ import (
 
 func main() {
 	db := app.DBConnect()
-	repo := repository.NewRepository(db)
+	repo := repository.NewUserRepository(db)
 	serv := service.NewUserService(repo)
 	contr := controller.NewUserController(serv)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
 
-	api.POST("/users", contr.RegisterUser)
+	api.POST("/users", contr.Register)
+	api.POST("/sessions", contr.Login)
 
 	router.Run()
 }

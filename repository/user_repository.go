@@ -2,6 +2,7 @@ package repository
 
 import "BWA-CAMPAIGN-APP/model/domain"
 
-type Repository interface {
-	Save(user domain.User) (domain.User, error)
+type UserRepository interface {
+	Save(user domain.User) (*domain.User, error)
+	FindByEmail(email string) (*domain.User, error)
 }

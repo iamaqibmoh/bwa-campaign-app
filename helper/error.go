@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func FormatValidationError(err error) *[]string {
+func formatValidationError(err error) *[]string {
 	var errors []string
 	for _, e := range err.(validator.ValidationErrors) {
 		errors = append(errors, e.Error())
@@ -16,7 +16,7 @@ func FormatValidationError(err error) *[]string {
 
 func UserRequestError(err error, c *gin.Context) {
 	if err != nil {
-		validationError := FormatValidationError(err)
+		validationError := formatValidationError(err)
 		errMessage := gin.H{"errors": validationError}
 		apiResponse := APIResponse("Register Account Failed", http.StatusUnprocessableEntity, "error", errMessage)
 		c.JSON(http.StatusBadRequest, &apiResponse)
@@ -24,7 +24,7 @@ func UserRequestError(err error, c *gin.Context) {
 	}
 }
 
-func ForwardToServiceError(err error, c *gin.Context) {
+func UserServiceError(err error, c *gin.Context) {
 	if err != nil {
 		apiResponse := APIResponse("Register Account Failed", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, &apiResponse)

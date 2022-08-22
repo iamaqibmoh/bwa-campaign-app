@@ -58,5 +58,18 @@ func (s *userServiceImpl) Login(request web.LoginUserRequest) (*domain.User, err
 	}
 
 	return findByEmail, nil
+}
 
+func (s *userServiceImpl) IsEmailAvailable(input web.CheckEmailInput) (bool, error) {
+	email := input.Email
+	findByEmail, err := s.repo.FindByEmail(email)
+	if err != nil {
+		return false, err
+	}
+
+	if findByEmail.Id == 0 {
+		return true, nil
+	}
+
+	return false, nil
 }

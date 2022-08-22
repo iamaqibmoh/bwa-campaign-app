@@ -14,19 +14,19 @@ func formatValidationError(err error) *[]string {
 	return &errors
 }
 
-func UserRequestError(err error, c *gin.Context) {
+func UserRequestError(c *gin.Context, err error) {
 	if err != nil {
 		validationError := formatValidationError(err)
 		errMessage := gin.H{"errors": validationError}
-		apiResponse := APIResponse("Register Account Failed", http.StatusUnprocessableEntity, "error", errMessage)
+		apiResponse := APIResponse("Ups, error create your request", http.StatusUnprocessableEntity, "error", errMessage)
 		c.JSON(http.StatusBadRequest, &apiResponse)
 		return
 	}
 }
 
-func UserServiceError(err error, c *gin.Context) {
+func UserServiceError(message string, c *gin.Context, err error) {
 	if err != nil {
-		apiResponse := APIResponse("Register Account Failed", http.StatusBadRequest, "error", nil)
+		apiResponse := APIResponse(message, http.StatusBadRequest, "error", err)
 		c.JSON(http.StatusBadRequest, &apiResponse)
 		return
 	}

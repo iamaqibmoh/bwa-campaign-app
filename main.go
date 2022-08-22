@@ -19,6 +19,7 @@ func main() {
 
 	api.POST("/users", contr.Register)
 	api.POST("/sessions", contr.Login)
+	api.POST("/email-checkers", contr.CheckEmailAvailable)
 
 	router.Run()
 }

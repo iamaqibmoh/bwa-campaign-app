@@ -1,6 +1,7 @@
 package service
 
 import (
+	"BWA-CAMPAIGN-APP/helper"
 	"BWA-CAMPAIGN-APP/model/domain"
 	"BWA-CAMPAIGN-APP/model/web"
 	"BWA-CAMPAIGN-APP/repository"
@@ -23,18 +24,13 @@ func (s *userServiceImpl) Register(request web.RegisterUserRequest) (*domain.Use
 	user.Occupation = request.Occupation
 
 	bytesPass, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.MinCost)
-	if err != nil {
-		return &user, err
-	}
+	helper.ReturnIfError(err)
 
 	user.PasswordHash = string(bytesPass)
 	user.Role = "user"
 
 	save, err := s.repo.Save(user)
-
-	if err != nil {
-		return save, err
-	}
+	helper.ReturnIfError(err)
 
 	return save, nil
 }
@@ -44,18 +40,14 @@ func (s *userServiceImpl) Login(request web.LoginUserRequest) (*domain.User, err
 	password := request.Password
 
 	findByEmail, err := s.repo.FindByEmail(email)
-	if err != nil {
-		return findByEmail, err
-	}
+	helper.ReturnIfError(err)
 
 	if findByEmail.Id == 0 {
 		return findByEmail, errors.New("No user found on that email ")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(findByEmail.PasswordHash), []byte(password))
-	if err != nil {
-		return findByEmail, err
-	}
+	helper.ReturnIfError(err)
 
 	return findByEmail, nil
 }
@@ -63,13 +55,23 @@ func (s *userServiceImpl) Login(request web.LoginUserRequest) (*domain.User, err
 func (s *userServiceImpl) IsEmailAvailable(input web.CheckEmailInput) (bool, error) {
 	email := input.Email
 	findByEmail, err := s.repo.FindByEmail(email)
-	if err != nil {
-		return false, err
-	}
+	helper.ReturnIfError(err)
 
 	if findByEmail.Id == 0 {
 		return true, nil
 	}
 
 	return false, nil
+}
+
+func (s *userServiceImpl) UpdateAvatar(id int, avatarLocation string) (*domain.User, error) {
+	findById, err := s.repo.FindById(id)
+	helper.ReturnIfError(err)
+
+	findById.Avatar = avatarLocation
+
+	update, err := s.repo.Update(findById)
+	helper.ReturnIfError(err)
+
+	return update, nil
 }

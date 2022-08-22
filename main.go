@@ -20,6 +20,7 @@ func main() {
 	api.POST("/users", contr.Register)
 	api.POST("/sessions", contr.Login)
 	api.POST("/email-checkers", contr.CheckEmailAvailable)
+	api.POST("/avatars", contr.UploadAvatar)
 
 	router.Run()
 }

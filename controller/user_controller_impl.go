@@ -4,6 +4,7 @@ import (
 	"BWA-CAMPAIGN-APP/helper"
 	"BWA-CAMPAIGN-APP/model/web"
 	"BWA-CAMPAIGN-APP/service"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -31,7 +32,7 @@ func (ct *UserControllerImpl) Register(c *gin.Context) {
 	}
 
 	userResponseFormatter := helper.UserResponseFormatter(register, "tokentokentokentokentoken")
-	apiResponse := helper.APIResponse("Account has been registered", http.StatusOK, "success", userResponseFormatter)
+	apiResponse := helper.APIResponseStruct("Account has been registered", http.StatusOK, "success", userResponseFormatter)
 
 	c.JSON(http.StatusOK, &apiResponse)
 }
@@ -51,7 +52,7 @@ func (ct *UserControllerImpl) Login(c *gin.Context) {
 	}
 
 	userResponseFormatter := helper.UserResponseFormatter(user, "tokentokentokentokentoken")
-	response := helper.APIResponse("Login Successfully", 200, "success", &userResponseFormatter)
+	response := helper.APIResponseStruct("Login Successfully", 200, "success", &userResponseFormatter)
 	c.JSON(200, &response)
 }
 
@@ -74,6 +75,35 @@ func (ct *UserControllerImpl) CheckEmailAvailable(c *gin.Context) {
 	}
 	data := gin.H{"is_available": isEmailAvailable}
 
-	response := helper.APIResponse(metaMessage, http.StatusOK, "success", data)
+	response := helper.APIResponseStruct(metaMessage, http.StatusOK, "success", data)
 	c.JSON(200, &response)
+}
+
+func (ct *UserControllerImpl) UploadAvatar(c *gin.Context) {
+	fileHeader, err := c.FormFile("avatar")
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+		helper.APIResponseStruct("Error upload your avatar", http.StatusOK, "error", data)
+		return
+	}
+
+	path := fmt.Sprintf("images/%d-%s", 1, fileHeader.Filename)
+
+	err = c.SaveUploadedFile(fileHeader, path)
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+		helper.APIResponseStruct("Error upload your avatar", http.StatusOK, "error", data)
+		return
+	}
+
+	_, err = ct.userService.UpdateAvatar(1, path)
+	if err != nil {
+		helper.UserServiceError("Error save your avatar", c, err)
+		return
+	}
+
+	avatar := helper.APIResponseStruct("Avatar successfully uploaded", 200, "success", gin.H{
+		"is_uploaded": true,
+	})
+	c.JSON(200, &avatar)
 }

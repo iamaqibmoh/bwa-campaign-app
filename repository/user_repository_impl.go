@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"BWA-CAMPAIGN-APP/helper"
 	"BWA-CAMPAIGN-APP/model/domain"
 	"gorm.io/gorm"
 )
@@ -15,18 +16,30 @@ func NewUserRepository(db *gorm.DB) *userRepository {
 
 func (r *userRepository) Save(user domain.User) (*domain.User, error) {
 	err := r.db.Create(&user).Error
-	if err != nil {
-		return &user, err
-	}
+	helper.ReturnIfError(err)
+
 	return &user, nil
 }
 
 func (r *userRepository) FindByEmail(email string) (*domain.User, error) {
 	user := domain.User{}
 	err := r.db.Where("email=?", email).Find(&user).Error
-	if err != nil {
-		return &user, err
-	}
+	helper.ReturnIfError(err)
 
 	return &user, nil
+}
+
+func (r *userRepository) FindById(id int) (*domain.User, error) {
+	user := domain.User{}
+	err := r.db.Where("id = ?", id).Find(&user).Error
+	helper.ReturnIfError(err)
+
+	return &user, nil
+}
+
+func (r *userRepository) Update(user *domain.User) (*domain.User, error) {
+	err := r.db.Save(&user).Error
+	helper.ReturnIfError(err)
+
+	return user, nil
 }

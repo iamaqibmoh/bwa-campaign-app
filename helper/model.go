@@ -16,7 +16,7 @@ func UserResponseFormatter(user *domain.User, token string) *web.UserResponseFor
 	return &userResp
 }
 
-func APIResponse(message string, code int, status string, data interface{}) *web.WebResponse {
+func APIResponseStruct(message string, code int, status string, data interface{}) *web.WebResponse {
 	meta := web.Meta{
 		Message: message,
 		Code:    code,

@@ -2,10 +2,13 @@ package test
 
 import (
 	"BWA-CAMPAIGN-APP/app"
+	"BWA-CAMPAIGN-APP/helper"
 	"BWA-CAMPAIGN-APP/model/web"
 	"BWA-CAMPAIGN-APP/repository"
 	"BWA-CAMPAIGN-APP/service"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"testing"
 )
@@ -45,4 +48,21 @@ func TestLoginService(t *testing.T) {
 
 	log.Println(user.Email)
 	log.Println(user.Name)
+}
+
+func TestErr(t *testing.T) {
+	err := 0
+	if err < 1 {
+		helper.ReturnIfError(errors.New("Ups"))
+		fmt.Println("Ini gajalan")
+	}
+}
+
+func TestAvatarUpdate(t *testing.T) {
+	repo := Repo()
+	serv := service.NewUserService(repo)
+	user, err := serv.UpdateAvatar(1, "/images/1-avatar.jpg")
+	helper.ReturnIfError(err)
+	bytes, _ := json.Marshal(user)
+	fmt.Println(string(bytes))
 }

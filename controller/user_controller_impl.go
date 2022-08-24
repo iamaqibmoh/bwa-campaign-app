@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"BWA-CAMPAIGN-APP/app"
 	"BWA-CAMPAIGN-APP/helper"
 	"BWA-CAMPAIGN-APP/model/web"
 	"BWA-CAMPAIGN-APP/service"
@@ -11,10 +12,11 @@ import (
 
 type UserControllerImpl struct {
 	userService service.UserService
+	authService app.AuthService
 }
 
-func NewUserController(service service.UserService) UserController {
-	return &UserControllerImpl{userService: service}
+func NewUserController(service service.UserService, authService app.AuthService) UserController {
+	return &UserControllerImpl{userService: service, authService: authService}
 }
 
 func (ct *UserControllerImpl) Register(c *gin.Context) {
@@ -31,7 +33,13 @@ func (ct *UserControllerImpl) Register(c *gin.Context) {
 		return
 	}
 
-	userResponseFormatter := helper.UserResponseFormatter(register, "tokentokentokentokentoken")
+	token, err := ct.authService.GenerateToken(register.Id)
+	if err != nil {
+		helper.UserServiceError("Token generate is error", c, err)
+		return
+	}
+
+	userResponseFormatter := helper.UserResponseFormatter(register, token)
 	apiResponse := helper.APIResponseStruct("Account has been registered", http.StatusOK, "success", userResponseFormatter)
 
 	c.JSON(http.StatusOK, &apiResponse)
@@ -51,7 +59,13 @@ func (ct *UserControllerImpl) Login(c *gin.Context) {
 		return
 	}
 
-	userResponseFormatter := helper.UserResponseFormatter(user, "tokentokentokentokentoken")
+	token, err := ct.authService.GenerateToken(user.Id)
+	if err != nil {
+		helper.UserServiceError("Token generate is error", c, err)
+		return
+	}
+
+	userResponseFormatter := helper.UserResponseFormatter(user, token)
 	response := helper.APIResponseStruct("Login Successfully", 200, "success", &userResponseFormatter)
 	c.JSON(200, &response)
 }

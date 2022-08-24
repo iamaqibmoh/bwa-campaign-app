@@ -66,3 +66,9 @@ func TestAvatarUpdate(t *testing.T) {
 	bytes, _ := json.Marshal(user)
 	fmt.Println(string(bytes))
 }
+
+func TestJWTGenerate(t *testing.T) {
+	authServ := app.NewAuthService()
+	token, _ := authServ.GenerateToken(1001)
+	log.Println(token)
+}

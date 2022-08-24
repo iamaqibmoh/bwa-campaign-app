@@ -12,7 +12,8 @@ func main() {
 	db := app.DBConnect()
 	repo := repository.NewUserRepository(db)
 	serv := service.NewUserService(repo)
-	contr := controller.NewUserController(serv)
+	authServ := app.NewAuthService()
+	contr := controller.NewUserController(serv, authServ)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")

@@ -2,11 +2,13 @@ package app
 
 import (
 	"BWA-CAMPAIGN-APP/helper"
+	"errors"
 	"github.com/dgrijalva/jwt-go"
 )
 
 type AuthService interface {
 	GenerateToken(Id int) (string, error)
+	ValidateToken(encodedToken string) (*jwt.Token, error)
 }
 
 type AuthServiceImpl struct {
@@ -28,4 +30,16 @@ func (a *AuthServiceImpl) GenerateToken(Id int) (string, error) {
 	helper.ReturnIfError(err)
 
 	return signedString, nil
+}
+
+func (a *AuthServiceImpl) ValidateToken(encodedToken string) (*jwt.Token, error) {
+	token, err := jwt.Parse(encodedToken, func(token *jwt.Token) (interface{}, error) {
+		_, ok := token.Method.(*jwt.SigningMethodHMAC)
+		if !ok {
+			return nil, errors.New("Invalid Token Method")
+		}
+		return []byte(secret_key), nil
+	})
+	helper.ReturnIfError(err)
+	return token, nil
 }

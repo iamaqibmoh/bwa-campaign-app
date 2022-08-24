@@ -72,3 +72,11 @@ func TestJWTGenerate(t *testing.T) {
 	token, _ := authServ.GenerateToken(1001)
 	log.Println(token)
 }
+
+func TestValidateToken(t *testing.T) {
+	authService := app.NewAuthService()
+	token, err := authService.ValidateToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxfQ.Htu9vGjyUuiHupXLaSxrt3FKEoShkvqVZgWsHYB0oYU")
+	helper.ReturnIfError(err)
+	log.Println("Valid")
+	log.Println(token)
+}

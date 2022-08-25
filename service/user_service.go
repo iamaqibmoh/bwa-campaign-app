@@ -6,8 +6,9 @@ import (
 )
 
 type UserService interface {
-	Register(request web.RegisterUserRequest) (*domain.User, error)
-	Login(request web.LoginUserRequest) (*domain.User, error)
+	Register(request web.RegisterUserRequest) (domain.User, error)
+	Login(request web.LoginUserRequest) (domain.User, error)
 	IsEmailAvailable(input web.CheckEmailInput) (bool, error)
-	UpdateAvatar(id int, avatarLocation string) (*domain.User, error)
+	UpdateAvatar(id int, avatarLocation string) (domain.User, error)
+	GetUserById(id int) (domain.User, error)
 }

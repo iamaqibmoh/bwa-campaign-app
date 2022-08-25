@@ -1,7 +1,6 @@
 package app
 
 import (
-	"BWA-CAMPAIGN-APP/helper"
 	"errors"
 	"github.com/dgrijalva/jwt-go"
 )
@@ -27,7 +26,9 @@ func (a *AuthServiceImpl) GenerateToken(Id int) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 
 	signedString, err := token.SignedString(secret_key)
-	helper.ReturnIfError(err)
+	if err != nil {
+		return signedString, err
+	}
 
 	return signedString, nil
 }
@@ -40,6 +41,8 @@ func (a *AuthServiceImpl) ValidateToken(encodedToken string) (*jwt.Token, error)
 		}
 		return []byte(secret_key), nil
 	})
-	helper.ReturnIfError(err)
+	if err != nil {
+		return token, err
+	}
 	return token, nil
 }

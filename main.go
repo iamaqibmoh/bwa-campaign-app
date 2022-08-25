@@ -3,6 +3,7 @@ package main
 import (
 	"BWA-CAMPAIGN-APP/app"
 	"BWA-CAMPAIGN-APP/controller"
+	"BWA-CAMPAIGN-APP/middleware"
 	"BWA-CAMPAIGN-APP/repository"
 	"BWA-CAMPAIGN-APP/service"
 	"github.com/gin-gonic/gin"
@@ -21,7 +22,7 @@ func main() {
 	api.POST("/users", contr.Register)
 	api.POST("/sessions", contr.Login)
 	api.POST("/email-checkers", contr.CheckEmailAvailable)
-	api.POST("/avatars", contr.UploadAvatar)
+	api.POST("/avatars", middleware.AuthMiddleware(authServ, serv), contr.UploadAvatar)
 
 	router.Run()
 }

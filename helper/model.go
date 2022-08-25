@@ -5,7 +5,7 @@ import (
 	"BWA-CAMPAIGN-APP/model/web"
 )
 
-func UserResponseFormatter(user *domain.User, token string) *web.UserResponseFormatter {
+func UserResponseFormatter(user domain.User, token string) *web.UserResponseFormatter {
 	userResp := web.UserResponseFormatter{
 		Id:         user.Id,
 		Name:       user.Name,

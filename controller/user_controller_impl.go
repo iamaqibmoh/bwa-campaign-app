@@ -3,6 +3,7 @@ package controller
 import (
 	"BWA-CAMPAIGN-APP/app"
 	"BWA-CAMPAIGN-APP/helper"
+	"BWA-CAMPAIGN-APP/model/domain"
 	"BWA-CAMPAIGN-APP/model/web"
 	"BWA-CAMPAIGN-APP/service"
 	"fmt"
@@ -29,13 +30,13 @@ func (ct *UserControllerImpl) Register(c *gin.Context) {
 
 	register, err := ct.userService.Register(user)
 	if err != nil {
-		helper.UserServiceError("Register user failed", c, err)
+		helper.UserServiceError("Register user failed", c, err.Error(), err)
 		return
 	}
 
 	token, err := ct.authService.GenerateToken(register.Id)
 	if err != nil {
-		helper.UserServiceError("Token generate is error", c, err)
+		helper.UserServiceError("Token generate is error", c, err.Error(), err)
 		return
 	}
 
@@ -55,13 +56,13 @@ func (ct *UserControllerImpl) Login(c *gin.Context) {
 
 	user, err := ct.userService.Login(login)
 	if err != nil {
-		helper.UserServiceError("Login failed", c, err)
+		helper.UserServiceError("Login failed", c, err.Error(), err)
 		return
 	}
 
 	token, err := ct.authService.GenerateToken(user.Id)
 	if err != nil {
-		helper.UserServiceError("Token generate is error", c, err)
+		helper.UserServiceError("Token generate is error", c, err.Error(), err)
 		return
 	}
 
@@ -79,7 +80,7 @@ func (ct *UserControllerImpl) CheckEmailAvailable(c *gin.Context) {
 	}
 	isEmailAvailable, err := ct.userService.IsEmailAvailable(email)
 	if err != nil {
-		helper.UserServiceError("Your email not available", c, err)
+		helper.UserServiceError("Your email not available", c, err.Error(), err)
 		return
 	}
 
@@ -97,7 +98,8 @@ func (ct *UserControllerImpl) UploadAvatar(c *gin.Context) {
 	fileHeader, err := c.FormFile("avatar")
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
-		helper.APIResponseStruct("Error upload your avatar", http.StatusOK, "error", data)
+		response := helper.APIResponseStruct("Error upload your avatar", http.StatusBadRequest, "error", data)
+		c.JSON(400, &response)
 		return
 	}
 
@@ -106,13 +108,19 @@ func (ct *UserControllerImpl) UploadAvatar(c *gin.Context) {
 	err = c.SaveUploadedFile(fileHeader, path)
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
-		helper.APIResponseStruct("Error upload your avatar", http.StatusOK, "error", data)
+		response := helper.APIResponseStruct("Error upload your avatar", http.StatusBadRequest, "error", data)
+		c.JSON(400, &response)
 		return
 	}
 
-	_, err = ct.userService.UpdateAvatar(1, path)
+	user_id, ok := c.MustGet("currentUser").(domain.User)
+	if !ok {
+		helper.UserServiceError("Error sending context", c, err.Error(), err)
+		return
+	}
+	_, err = ct.userService.UpdateAvatar(user_id.Id, path)
 	if err != nil {
-		helper.UserServiceError("Error save your avatar", c, err)
+		helper.UserServiceError("Error save your avatar", c, err.Error(), err)
 		return
 	}
 

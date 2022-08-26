@@ -11,18 +11,29 @@ import (
 
 func main() {
 	db := app.DBConnect()
+
+	//user dependency
 	repo := repository.NewUserRepository(db)
 	serv := service.NewUserService(repo)
 	authServ := app.NewAuthService()
 	contr := controller.NewUserController(serv, authServ)
 
+	//campaign dependency
+	repoCamp := repository.NewCampaignRepository(db)
+	servCamp := service.NewCampaignService(repoCamp)
+	contrCamp := controller.NewCampaignController(servCamp)
+
 	router := gin.Default()
 	api := router.Group("/api/v1")
 
+	//user endpoint
 	api.POST("/users", contr.Register)
 	api.POST("/sessions", contr.Login)
 	api.POST("/email-checkers", contr.CheckEmailAvailable)
 	api.POST("/avatars", middleware.AuthMiddleware(authServ, serv), contr.UploadAvatar)
+
+	//campaign endpoint
+	api.GET("/campaigns", contrCamp.GetCampaigns)
 
 	router.Run()
 }

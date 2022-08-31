@@ -34,3 +34,13 @@ func (r *campaignRepositoryImpl) FindByUserId(userId int) ([]domain.Campaign, er
 
 	return campaigns, nil
 }
+
+func (r *campaignRepositoryImpl) FindById(campId int) (domain.Campaign, error) {
+	campaign := domain.Campaign{}
+	err := r.db.Preload("CampaignImages").Preload("User").Where("id=?", campId).Find(&campaign).Error
+	if err != nil {
+		return campaign, err
+	}
+
+	return campaign, nil
+}

@@ -12,9 +12,12 @@ Accept: application/json
 }
 
 ###GetCampaign
-GET http://localhost:8080/api/v1/campaigns?user_id=100
+GET http://localhost:8080/api/v1/campaigns?user_id=1
 Accept: application/json
 
 ###StaticFiles
 GET http://localhost:8080/images/1-cls45amg.jpg
 Accept: image/jpeg
+
+###GetCampainsById
+GET http://localhost:8080/api/v1/campaigns/1

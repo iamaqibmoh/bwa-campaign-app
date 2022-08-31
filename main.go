@@ -35,6 +35,7 @@ func main() {
 
 	//campaign endpoint
 	api.GET("/campaigns", contrCamp.GetCampaigns)
+	api.GET("/campaigns/:id", contrCamp.GetCampaignById)
 
 	router.Run()
 }

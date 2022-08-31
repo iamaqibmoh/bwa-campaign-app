@@ -29,3 +29,12 @@ func (s *CampaignServiceImpl) GetCampaigns(userId int) ([]domain.Campaign, error
 
 	return campaigns, err
 }
+
+func (s *CampaignServiceImpl) GetCampaignById(campId int) (domain.Campaign, error) {
+	campaign, err := s.repo.FindById(campId)
+	if err != nil {
+		return campaign, err
+	}
+
+	return campaign, nil
+}

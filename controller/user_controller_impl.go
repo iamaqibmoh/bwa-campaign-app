@@ -24,19 +24,19 @@ func (ct *UserControllerImpl) Register(c *gin.Context) {
 	user := web.RegisterUserRequest{}
 	err := c.ShouldBindJSON(&user)
 	if err != nil {
-		helper.UserRequestError(c, err)
+		helper.RequestError(c, err)
 		return
 	}
 
 	register, err := ct.userService.Register(user)
 	if err != nil {
-		helper.UserServiceError("Register user failed", c, err.Error(), err)
+		helper.ServiceError("Register user failed", c, err.Error(), err)
 		return
 	}
 
 	token, err := ct.authService.GenerateToken(register.Id)
 	if err != nil {
-		helper.UserServiceError("Token generate is error", c, err.Error(), err)
+		helper.ServiceError("Token generate is error", c, err.Error(), err)
 		return
 	}
 
@@ -50,19 +50,19 @@ func (ct *UserControllerImpl) Login(c *gin.Context) {
 	login := web.LoginUserRequest{}
 	err := c.ShouldBindJSON(&login)
 	if err != nil {
-		helper.UserRequestError(c, err)
+		helper.RequestError(c, err)
 		return
 	}
 
 	user, err := ct.userService.Login(login)
 	if err != nil {
-		helper.UserServiceError("Login failed", c, err.Error(), err)
+		helper.ServiceError("Login failed", c, err.Error(), err)
 		return
 	}
 
 	token, err := ct.authService.GenerateToken(user.Id)
 	if err != nil {
-		helper.UserServiceError("Token generate is error", c, err.Error(), err)
+		helper.ServiceError("Token generate is error", c, err.Error(), err)
 		return
 	}
 
@@ -75,12 +75,12 @@ func (ct *UserControllerImpl) CheckEmailAvailable(c *gin.Context) {
 	email := web.CheckEmailInput{}
 	err := c.ShouldBindJSON(&email)
 	if err != nil {
-		helper.UserRequestError(c, err)
+		helper.RequestError(c, err)
 		return
 	}
 	isEmailAvailable, err := ct.userService.IsEmailAvailable(email)
 	if err != nil {
-		helper.UserServiceError("Your email not available", c, err.Error(), err)
+		helper.ServiceError("Your email not available", c, err.Error(), err)
 		return
 	}
 
@@ -115,12 +115,12 @@ func (ct *UserControllerImpl) UploadAvatar(c *gin.Context) {
 
 	user_id, ok := c.MustGet("currentUser").(domain.User)
 	if !ok {
-		helper.UserServiceError("Error sending context", c, err.Error(), err)
+		helper.ServiceError("Error sending context", c, err.Error(), err)
 		return
 	}
 	_, err = ct.userService.UpdateAvatar(user_id.Id, path)
 	if err != nil {
-		helper.UserServiceError("Error save your avatar", c, err.Error(), err)
+		helper.ServiceError("Error save your avatar", c, err.Error(), err)
 		return
 	}
 

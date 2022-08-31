@@ -14,7 +14,7 @@ func formatValidationError(err error) []string {
 	return errors
 }
 
-func UserRequestError(c *gin.Context, err error) {
+func RequestError(c *gin.Context, err error) {
 	if err != nil {
 		validationError := formatValidationError(err)
 		errMessage := gin.H{"errors": validationError}
@@ -23,7 +23,7 @@ func UserRequestError(c *gin.Context, err error) {
 	}
 }
 
-func UserServiceError(message string, c *gin.Context, data string, err error) {
+func ServiceError(message string, c *gin.Context, data string, err error) {
 	if err != nil {
 		apiResponse := APIResponseStruct(message, http.StatusBadRequest, "error", data)
 		c.JSON(http.StatusBadRequest, &apiResponse)

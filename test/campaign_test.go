@@ -29,7 +29,7 @@ func TestCampaignGetAll(t *testing.T) {
 
 func TestCampaignFindByUserId(t *testing.T) {
 	repo := repository.NewCampaignRepository(db)
-	campaigns, err := repo.FindByUserId(1)
+	campaigns, err := repo.FindCampaignByUserId(1)
 	IfError(err)
 	for _, campaign := range campaigns {
 		fmt.Println(campaign.Name)

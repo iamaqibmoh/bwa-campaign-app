@@ -2,7 +2,10 @@ package service
 
 import (
 	"BWA-CAMPAIGN-APP/model/domain"
+	"BWA-CAMPAIGN-APP/model/web"
 	"BWA-CAMPAIGN-APP/repository"
+	"fmt"
+	"github.com/gosimple/slug"
 )
 
 type CampaignServiceImpl struct {
@@ -27,7 +30,7 @@ func (s *CampaignServiceImpl) GetCampaigns(userId int) ([]domain.Campaign, error
 		return campaigns, err
 	}
 
-	return campaigns, err
+	return campaigns, nil
 }
 
 func (s *CampaignServiceImpl) GetCampaignById(campId int) (domain.Campaign, error) {
@@ -37,4 +40,24 @@ func (s *CampaignServiceImpl) GetCampaignById(campId int) (domain.Campaign, erro
 	}
 
 	return campaign, nil
+}
+
+func (s *CampaignServiceImpl) CreateCampaign(input web.CreateCampaignInput) (domain.Campaign, error) {
+	campaign := domain.Campaign{}
+	campaign.Name = input.Name
+	campaign.Summary = input.Summary
+	campaign.Description = input.Description
+	campaign.Perks = input.Perks
+	campaign.GoalAmount = input.GoalAmount
+	campaign.UserId = input.User.Id
+
+	slugText := fmt.Sprintf("%s %d", input.Name, input.User.Id)
+	campaign.Slug = slug.Make(slugText)
+
+	save, err := s.repo.Save(campaign)
+	if err != nil {
+		return save, err
+	}
+
+	return save, nil
 }

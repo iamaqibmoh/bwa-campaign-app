@@ -44,3 +44,12 @@ func (r *campaignRepositoryImpl) FindById(campId int) (domain.Campaign, error) {
 
 	return campaign, nil
 }
+
+func (r *campaignRepositoryImpl) Save(campaign domain.Campaign) (domain.Campaign, error) {
+	err := r.db.Create(&campaign).Error
+	if err != nil {
+		return campaign, err
+	}
+
+	return campaign, nil
+}

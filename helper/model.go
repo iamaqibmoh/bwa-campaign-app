@@ -17,6 +17,23 @@ func UserResponseFormatter(user domain.User, token string) *web.UserResponseForm
 	return &userResp
 }
 
+func CampaignResponseFormatterBasic(campaign domain.Campaign) web.CampaignResponseFormatterBasic {
+	camp := web.CampaignResponseFormatterBasic{}
+	camp.Id = campaign.Id
+	camp.UserId = campaign.UserId
+	camp.Name = campaign.Name
+	camp.Summary = campaign.Summary
+	camp.GoalAmount = campaign.GoalAmount
+	camp.CurrentAmount = campaign.CurrentAmount
+	camp.Slug = campaign.Slug
+	camp.ImageUrl = ""
+	if len(campaign.CampaignImages) > 0 {
+		camp.ImageUrl = campaign.CampaignImages[0].FileName
+	}
+
+	return camp
+}
+
 func CampaignResponseFormatter(campaign domain.Campaign) web.CampaignResponseFormatter {
 	campaignResp := web.CampaignResponseFormatter{}
 	campaignResp.Id = campaign.Id

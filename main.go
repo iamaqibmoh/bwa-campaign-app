@@ -36,6 +36,7 @@ func main() {
 	//campaign endpoint
 	api.GET("/campaigns", contrCamp.GetCampaigns)
 	api.GET("/campaigns/:id", contrCamp.GetCampaignById)
+	api.POST("/campaigns", middleware.AuthMiddleware(authServ, serv), contrCamp.CreateCampaign)
 
 	router.Run()
 }

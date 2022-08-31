@@ -1,5 +1,14 @@
-###Register
+###Login
+POST http://localhost:8080/api/v1/sessions
+Content-Type: application/json
+Accept: application/json
 
+{
+  "email": "otong@test.com",
+  "password": "password"
+}
+
+###Register
 POST http://localhost:8080/api/v1/users
 Content-Type: application/json
 Accept: application/json
@@ -21,3 +30,17 @@ Accept: image/jpeg
 
 ###GetCampainsById
 GET http://localhost:8080/api/v1/campaigns/1
+
+###Post campaign
+POST http://localhost:8080/api/v1/campaigns
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1fQ.P98i4MPU7uoGV2K8k9v2MD8W7cFmx2VVbtc7HAwL3So
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Campaign yang SANGAT KEREN",
+  "summary": "Deskripsi singkat camapign",
+  "description": "Ini deskripsi panjangnya yaa",
+  "goal_amount": 125000000,
+  "perks": "keuntungan satu, dua keuntungan, tiga keuntungan"
+}

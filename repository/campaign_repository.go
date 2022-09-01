@@ -7,4 +7,5 @@ type CampaignRepository interface {
 	FindByUserId(userId int) ([]domain.Campaign, error)
 	FindById(campId int) (domain.Campaign, error)
 	Save(campaign domain.Campaign) (domain.Campaign, error)
+	Update(campaign domain.Campaign) (domain.Campaign, error)
 }

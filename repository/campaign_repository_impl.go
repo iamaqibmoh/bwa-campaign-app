@@ -53,3 +53,11 @@ func (r *campaignRepositoryImpl) Save(campaign domain.Campaign) (domain.Campaign
 
 	return campaign, nil
 }
+
+func (r *campaignRepositoryImpl) Update(campaign domain.Campaign) (domain.Campaign, error) {
+	err := r.db.Save(&campaign).Error
+	if err != nil {
+		return campaign, err
+	}
+	return campaign, nil
+}

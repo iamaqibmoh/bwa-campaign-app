@@ -71,3 +71,31 @@ func (contr *CampaignControllerImpl) CreateCampaign(c *gin.Context) {
 	response := helper.APIResponseStruct("Your campaign was successfully created", 200, "success", helper.CampaignResponseFormatterBasic(campaign))
 	helper.WriteToResponseBody(c.Writer, response)
 }
+
+func (contr *CampaignControllerImpl) UpdateCampaign(c *gin.Context) {
+	inputId := web.GetCampaignDetailInput{}
+	err := c.ShouldBindUri(&inputId)
+	if err != nil {
+		helper.RequestError(c, err)
+		return
+	}
+
+	inputData := web.CreateCampaignInput{}
+	err = c.ShouldBindJSON(&inputData)
+	if err != nil {
+		helper.RequestError(c, err)
+		return
+	}
+
+	user := c.MustGet("currentUser").(domain.User)
+	inputData.User = user
+
+	campaign, err := contr.serv.UpdateCampaign(inputId, inputData)
+	if err != nil {
+		helper.ServiceError("Failed to update campaign", c, err.Error(), err)
+		return
+	}
+
+	response := helper.APIResponseStruct("Campaign is successfully updated", 200, "success", helper.CampaignResponseFormatterBasic(campaign))
+	c.JSON(200, response)
+}

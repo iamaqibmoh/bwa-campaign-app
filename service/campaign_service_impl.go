@@ -4,6 +4,7 @@ import (
 	"BWA-CAMPAIGN-APP/model/domain"
 	"BWA-CAMPAIGN-APP/model/web"
 	"BWA-CAMPAIGN-APP/repository"
+	"errors"
 	"fmt"
 	"github.com/gosimple/slug"
 )
@@ -60,4 +61,25 @@ func (s *CampaignServiceImpl) CreateCampaign(input web.CreateCampaignInput) (dom
 	}
 
 	return save, nil
+}
+
+func (s *CampaignServiceImpl) UpdateCampaign(inputId web.GetCampaignDetailInput, inputData web.CreateCampaignInput) (domain.Campaign, error) {
+	campaign, err := s.repo.FindById(inputId.CampId)
+	if err != nil {
+		return campaign, err
+	}
+
+	if campaign.UserId != inputData.User.Id {
+		return campaign, errors.New("You're not authorized to change this campaign")
+	}
+
+	campaign.Name = inputData.Name
+	campaign.Summary = inputData.Summary
+	campaign.Description = inputData.Description
+	campaign.GoalAmount = inputData.GoalAmount
+	campaign.Perks = inputData.Perks
+	campaign.UserId = inputData.User.Id
+
+	update, err := s.repo.Update(campaign)
+	return update, err
 }

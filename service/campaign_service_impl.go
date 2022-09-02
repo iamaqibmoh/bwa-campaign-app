@@ -83,3 +83,34 @@ func (s *CampaignServiceImpl) UpdateCampaign(inputId web.GetCampaignDetailInput,
 	update, err := s.repo.Update(campaign)
 	return update, err
 }
+
+func (s *CampaignServiceImpl) CreateCampaignImages(input web.CreateCampaignImageInput, fileLocation string) (domain.CampaignImage, error) {
+	campaign, err2 := s.repo.FindById(input.CampaignId)
+	if err2 != nil {
+		return domain.CampaignImage{}, err2
+	}
+
+	if campaign.UserId != input.User.Id {
+		return domain.CampaignImage{}, errors.New("You're not authorized user for upload this campaign image")
+	}
+
+	image := domain.CampaignImage{}
+	isPrimary := 0
+	if input.IsPrimary {
+		isPrimary = 1
+		_, err := s.repo.MarkAllImagesAsNonPrimary(input.CampaignId)
+		if err != nil {
+			return image, err
+		}
+	}
+
+	image.CampaignId = input.CampaignId
+	image.IsPrimary = isPrimary
+	image.FileName = fileLocation
+
+	campaignImage, err := s.repo.SaveCampaignImages(image)
+	if err != nil {
+		return campaignImage, err
+	}
+	return campaignImage, nil
+}

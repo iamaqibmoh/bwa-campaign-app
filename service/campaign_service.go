@@ -10,4 +10,5 @@ type CampaignService interface {
 	GetCampaignById(campId int) (domain.Campaign, error)
 	CreateCampaign(input web.CreateCampaignInput) (domain.Campaign, error)
 	UpdateCampaign(inputId web.GetCampaignDetailInput, inputData web.CreateCampaignInput) (domain.Campaign, error)
+	CreateCampaignImages(input web.CreateCampaignImageInput, fileLocation string) (domain.CampaignImage, error)
 }

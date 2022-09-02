@@ -8,4 +8,6 @@ type CampaignRepository interface {
 	FindById(campId int) (domain.Campaign, error)
 	Save(campaign domain.Campaign) (domain.Campaign, error)
 	Update(campaign domain.Campaign) (domain.Campaign, error)
+	SaveCampaignImages(image domain.CampaignImage) (domain.CampaignImage, error)
+	MarkAllImagesAsNonPrimary(campId int) (bool, error)
 }

@@ -61,3 +61,19 @@ func (r *campaignRepositoryImpl) Update(campaign domain.Campaign) (domain.Campai
 	}
 	return campaign, nil
 }
+
+func (r *campaignRepositoryImpl) SaveCampaignImages(image domain.CampaignImage) (domain.CampaignImage, error) {
+	err := r.db.Create(&image).Error
+	if err != nil {
+		return image, err
+	}
+	return image, nil
+}
+
+func (r *campaignRepositoryImpl) MarkAllImagesAsNonPrimary(campId int) (bool, error) {
+	err := r.db.Model(domain.CampaignImage{}).Where("campaign_id=?", campId).Update("is_primary", false).Error
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}

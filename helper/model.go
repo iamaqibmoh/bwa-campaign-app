@@ -108,3 +108,26 @@ func APIResponseStruct(message string, code int, status string, data interface{}
 
 	return &webResp
 }
+
+func CampaignTransactionFormatter(transaction domain.Transaction) web.CampaignTransactionFormatter {
+	formatter := web.CampaignTransactionFormatter{}
+	formatter.Id = transaction.Id
+	formatter.Name = transaction.User.Name
+	formatter.Amount = transaction.Amount
+	formatter.CreatedAt = transaction.CreatedAt
+
+	return formatter
+}
+
+func CampaignTransactionFormatters(transactions []domain.Transaction) []web.CampaignTransactionFormatter {
+	if len(transactions) == 0 {
+		return []web.CampaignTransactionFormatter{}
+	}
+
+	var formatters []web.CampaignTransactionFormatter
+
+	for _, tr := range transactions {
+		formatters = append(formatters, CampaignTransactionFormatter(tr))
+	}
+	return formatters
+}

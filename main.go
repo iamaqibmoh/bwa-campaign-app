@@ -12,35 +12,43 @@ import (
 func main() {
 	db := app.DBConnect()
 
-	//user dependency
-	repo := repository.NewUserRepository(db)
-	serv := service.NewUserService(repo)
+	//user Dependency
+	repoUser := repository.NewUserRepository(db)
+	servUser := service.NewUserService(repoUser)
 	authServ := app.NewAuthService()
-	contr := controller.NewUserController(serv, authServ)
+	contrUser := controller.NewUserController(servUser, authServ)
 
-	//campaign dependency
+	//campaign Dependency
 	repoCamp := repository.NewCampaignRepository(db)
 	servCamp := service.NewCampaignService(repoCamp)
 	contrCamp := controller.NewCampaignController(servCamp)
+
+	//Transaction Dependency
+	repoTrs := repository.NewTransactionRepository(db)
+	servTrs := service.NewTransactionService(repoTrs, repoCamp)
+	contrTrs := controller.NewTransactionController(servTrs)
 
 	router := gin.Default()
 	router.Static("/images", "./images")
 	api := router.Group("/api/v1")
 
 	//user Endpoint
-	api.POST("/users", contr.Register)
-	api.POST("/sessions", contr.Login)
-	api.POST("/email-checkers", contr.CheckEmailAvailable)
-	api.POST("/avatars", middleware.AuthMiddleware(authServ, serv), contr.UploadAvatar)
+	api.POST("/users", contrUser.Register)
+	api.POST("/sessions", contrUser.Login)
+	api.POST("/email-checkers", contrUser.CheckEmailAvailable)
+	api.POST("/avatars", middleware.AuthMiddleware(authServ, servUser), contrUser.UploadAvatar)
 
 	//campaign Endpoint
 	api.GET("/campaigns", contrCamp.GetCampaigns)
 	api.GET("/campaigns/:id", contrCamp.GetCampaignById)
-	api.POST("/campaigns", middleware.AuthMiddleware(authServ, serv), contrCamp.CreateCampaign)
-	api.PUT("/campaigns/:id", middleware.AuthMiddleware(authServ, serv), contrCamp.UpdateCampaign)
+	api.POST("/campaigns", middleware.AuthMiddleware(authServ, servUser), contrCamp.CreateCampaign)
+	api.PUT("/campaigns/:id", middleware.AuthMiddleware(authServ, servUser), contrCamp.UpdateCampaign)
 
 	//Campaign Image Endpoint
-	api.POST("/campaign-images", middleware.AuthMiddleware(authServ, serv), contrCamp.CreateCampaignImages)
+	api.POST("/campaign-images", middleware.AuthMiddleware(authServ, servUser), contrCamp.CreateCampaignImages)
+
+	//Campaign Transaction Endpoint
+	api.GET("/campaigns/:id/transactions", middleware.AuthMiddleware(authServ, servUser), contrTrs.GetCampaignTransactions)
 
 	router.Run()
 }

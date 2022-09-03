@@ -20,3 +20,8 @@ type CreateCampaignImageInput struct {
 	IsPrimary  bool `form:"is_primary"`
 	User       domain.User
 }
+
+type GetCampaignTransactionsInput struct {
+	Id   int `uri:"id" binding:"required"`
+	User domain.User
+}

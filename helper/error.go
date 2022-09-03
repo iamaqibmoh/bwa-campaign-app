@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"net/http"
@@ -28,4 +29,15 @@ func ServiceError(message string, c *gin.Context, data string, err error) {
 		apiResponse := APIResponseStruct(message, http.StatusBadRequest, "error", data)
 		c.JSON(http.StatusBadRequest, &apiResponse)
 	}
+}
+
+func ErrorNotNil(data interface{}, err error) (interface{}, error) {
+	if err != nil {
+		fmt.Println(data)
+		fmt.Println(err.Error())
+		return data, err
+	}
+	fmt.Println(data)
+	fmt.Println(err)
+	return data, err
 }

@@ -1,5 +1,7 @@
 package web
 
+import "time"
+
 type UserResponseFormatter struct {
 	Id         int    `json:"id"`
 	Name       string `json:"name"`
@@ -42,4 +44,11 @@ type CampaignUserFormatter struct {
 type CampaignImageFormatter struct {
 	ImageUrl  string `json:"image_url"`
 	IsPrimary bool   `json:"is_primary"`
+}
+
+type CampaignTransactionFormatter struct {
+	Id        int       `json:"id"`
+	Name      string    `json:"name"`
+	Amount    int       `json:"amount"`
+	CreatedAt time.Time `json:"created_at"`
 }
